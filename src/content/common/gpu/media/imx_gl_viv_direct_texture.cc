@@ -16,11 +16,15 @@ bool init_viv_direct_texture(gfx::GLContext &context, GLESVIVDirectTextureProcs 
 		return false;
 	}
 
+	// Newer Vivante drivers call the extension GL_VIV_tex_direct instead of GL_VIV_direct_texture,
+	// even though it is the same extension
 	if (context.HasExtension("GL_VIV_direct_texture"))
 		VLOG(1) << "GL_VIV_direct_texture supported";
+	else if (context.HasExtension("GL_VIV_tex_direct"))
+		VLOG(1) << "GL_VIV_tex_direct supported";
 	else
 	{
-		VLOG(1) << "GL_VIV_direct_texture not supported";
+		VLOG(1) << "Neither GL_VIV_direct_texture nor GL_VIV_tex_direct supported";
 		return false;
 	}
 
