@@ -207,7 +207,7 @@ static unsigned int dec_convert_outcode(VpuDecBufRetCode code)
 }
 
 
-static void dec_convert_to_wrapper_open_param(ImxVpuDecOpenParams *open_params, VpuDecOpenParam *wrapper_open_param)
+static void dec_convert_to_wrapper_open_param(ImxVpuDecOpenParams const *open_params, VpuDecOpenParam *wrapper_open_param)
 {
 	memset(wrapper_open_param, 0, sizeof(VpuDecOpenParam));
 	
@@ -377,7 +377,7 @@ void imx_vpu_dec_get_bitstream_buffer_info(unsigned int *alignment, size_t *size
 }
 
 
-ImxVpuDecReturnCodes imx_vpu_dec_open(ImxVpuDecoder **decoder, ImxVpuDecOpenParams *open_params, void *bitstream_buffer_virtual_address, imx_vpu_phys_addr_t bitstream_buffer_physical_addres)
+ImxVpuDecReturnCodes imx_vpu_dec_open(ImxVpuDecoder **decoder, ImxVpuDecOpenParams const *open_params, void *bitstream_buffer_virtual_address, imx_vpu_phys_addr_t bitstream_buffer_physical_addres)
 {
 	int config_param;
 	VpuDecRetCode ret;
@@ -658,7 +658,7 @@ ImxVpuDecReturnCodes imx_vpu_dec_register_framebuffers(ImxVpuDecoder *decoder, I
 }
 
 
-void imx_vpu_dec_calc_framebuffer_sizes(ImxVpuDecInitialInfo *initial_info, unsigned int *frame_width, unsigned int *frame_height, unsigned int *y_stride, unsigned int *uv_stride, unsigned int *y_size, unsigned int *uv_size, unsigned int *mvcol_size, unsigned int *total_size)
+void imx_vpu_dec_calc_framebuffer_sizes(ImxVpuDecInitialInfo const *initial_info, unsigned int *frame_width, unsigned int *frame_height, unsigned int *y_stride, unsigned int *uv_stride, unsigned int *y_size, unsigned int *uv_size, unsigned int *mvcol_size, unsigned int *total_size)
 {
 	int alignment;
 
@@ -718,7 +718,7 @@ ImxVpuDecReturnCodes imx_vpu_dec_get_initial_info(ImxVpuDecoder *decoder, ImxVpu
 }
 
 
-ImxVpuDecReturnCodes imx_vpu_dec_decode_frame(ImxVpuDecoder *decoder, ImxVpuEncodedFrame *encoded_frame, unsigned int *output_code)
+ImxVpuDecReturnCodes imx_vpu_dec_decode_frame(ImxVpuDecoder *decoder, ImxVpuEncodedFrame const *encoded_frame, unsigned int *output_code)
 {
 	VpuDecRetCode ret;
 	VpuBufferNode node;
@@ -1021,7 +1021,7 @@ int imx_vpu_dec_get_min_num_free_required(ImxVpuDecoder *decoder)
 }
 
 
-ImxVpuDecReturnCodes imx_vpu_dec_mark_framebuffer_as_displayed(ImxVpuDecoder *decoder, ImxVpuFramebuffer *framebuffer)
+ImxVpuDecReturnCodes imx_vpu_dec_mark_framebuffer_as_displayed(ImxVpuDecoder *decoder, ImxVpuFramebuffer const *framebuffer)
 {
 	VpuDecRetCode ret;
 	VpuFrameBuffer *wrapper_fb = (VpuFrameBuffer *)(framebuffer->internal);

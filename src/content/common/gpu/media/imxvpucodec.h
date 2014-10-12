@@ -388,23 +388,23 @@ ImxVpuDecReturnCodes imx_vpu_dec_deallocate_memory(ImxVpuMemBlock *mem_block);
  * must be aligned according to the alignment value. */
 void imx_vpu_dec_get_bitstream_buffer_info(unsigned int *alignment, size_t *size);
 
-ImxVpuDecReturnCodes imx_vpu_dec_open(ImxVpuDecoder **decoder, ImxVpuDecOpenParams *open_params, void *bitstream_buffer_virtual_address, imx_vpu_phys_addr_t bitstream_buffer_physical_address);
+ImxVpuDecReturnCodes imx_vpu_dec_open(ImxVpuDecoder **decoder, ImxVpuDecOpenParams const *open_params, void *bitstream_buffer_virtual_address, imx_vpu_phys_addr_t bitstream_buffer_physical_address);
 ImxVpuDecReturnCodes imx_vpu_dec_close(ImxVpuDecoder *decoder);
 
 ImxVpuDecReturnCodes imx_vpu_dec_set_drain_mode(ImxVpuDecoder *decoder, int enabled);
 ImxVpuDecReturnCodes imx_vpu_dec_flush(ImxVpuDecoder *decoder);
 
 ImxVpuDecReturnCodes imx_vpu_dec_register_framebuffers(ImxVpuDecoder *decoder, ImxVpuFramebuffer *framebuffers, unsigned int num_framebuffers);
-void imx_vpu_dec_calc_framebuffer_sizes(ImxVpuDecInitialInfo *initial_info, unsigned int *frame_width, unsigned int *frame_height, unsigned int *y_stride, unsigned int *cbcr_stride, unsigned int *y_size, unsigned int *cbcr_size, unsigned int *mvcol_size, unsigned int *total_size);
+void imx_vpu_dec_calc_framebuffer_sizes(ImxVpuDecInitialInfo const *initial_info, unsigned int *frame_width, unsigned int *frame_height, unsigned int *y_stride, unsigned int *cbcr_stride, unsigned int *y_size, unsigned int *cbcr_size, unsigned int *mvcol_size, unsigned int *total_size);
 
 ImxVpuDecReturnCodes imx_vpu_dec_get_initial_info(ImxVpuDecoder *decoder, ImxVpuDecInitialInfo *info);
 
-ImxVpuDecReturnCodes imx_vpu_dec_decode_frame(ImxVpuDecoder *decoder, ImxVpuEncodedFrame *encoded_frame, unsigned int *output_code);
+ImxVpuDecReturnCodes imx_vpu_dec_decode_frame(ImxVpuDecoder *decoder, ImxVpuEncodedFrame const *encoded_frame, unsigned int *output_code);
 ImxVpuDecReturnCodes imx_vpu_dec_get_decoded_frame(ImxVpuDecoder *decoder, ImxVpuDecodedFrame *decoded_frame);
 void* imx_vpu_dec_get_dropped_frame_user_data(ImxVpuDecoder *decoder);
 int imx_vpu_dec_get_num_free_framebuffers(ImxVpuDecoder *decoder);
 int imx_vpu_dec_get_min_num_free_required(ImxVpuDecoder *decoder);
-ImxVpuDecReturnCodes imx_vpu_dec_mark_framebuffer_as_displayed(ImxVpuDecoder *decoder, ImxVpuFramebuffer *framebuffer);
+ImxVpuDecReturnCodes imx_vpu_dec_mark_framebuffer_as_displayed(ImxVpuDecoder *decoder, ImxVpuFramebuffer const *framebuffer);
 
 
 
