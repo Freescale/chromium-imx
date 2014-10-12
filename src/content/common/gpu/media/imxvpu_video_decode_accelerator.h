@@ -12,9 +12,6 @@
 #include "base/compiler_specific.h"
 #include "base/synchronization/lock.h"
 #include "content/common/content_export.h"
-#ifdef IMXVPU_WITH_VDA_IMPL
-#include "content/common/gpu/media/video_decode_accelerator_impl.h"
-#endif
 #include "gpu/command_buffer/service/gles2_cmd_decoder.h"
 #include "media/base/bitstream_buffer.h"
 #include "media/video/picture.h"
@@ -29,11 +26,7 @@ namespace content
 
 
 class CONTENT_EXPORT ImxVpuVideoDecodeAccelerator
-#ifdef IMXVPU_WITH_VDA_IMPL
-	: public VideoDecodeAcceleratorImpl
-#else
 	: public media::VideoDecodeAccelerator
-#endif
 {
 public:
 	explicit ImxVpuVideoDecodeAccelerator(base::WeakPtr < gpu::gles2::GLES2Decoder > const gles2_decoder, base::Callback < bool(void) > const &make_context_current);
@@ -46,9 +39,7 @@ public:
 	virtual void Flush() OVERRIDE;
 	virtual void Reset() OVERRIDE;
 	virtual void Destroy() OVERRIDE;
-#ifndef IMXVPU_WITH_VDA_IMPL
 	virtual bool CanDecodeOnIOThread() OVERRIDE;
-#endif
 
 
 private:

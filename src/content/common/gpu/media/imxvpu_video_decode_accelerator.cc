@@ -150,9 +150,6 @@ bool ImxVpuVideoDecodeAccelerator::Initialize(media::VideoCodecProfile profile, 
 	}
 
 	VLOG(1) << "Initialization done";
-#ifdef IMXVPU_NEEDS_NOTIFY_INIT
-	message_loop_->PostTask(FROM_HERE, base::Bind(&Client::NotifyInitializeDone, client_));
-#endif
 
 	return true;
 }
@@ -302,12 +299,10 @@ void ImxVpuVideoDecodeAccelerator::Destroy()
 }
 
 
-#ifndef IMXVPU_WITH_VDA_IMPL
 bool ImxVpuVideoDecodeAccelerator::CanDecodeOnIOThread()
 {
 	return false;
 }
-#endif
 
 
 void ImxVpuVideoDecodeAccelerator::Cleanup()
@@ -690,7 +685,16 @@ bool ImxVpuVideoDecodeAccelerator::ProcessOutput(ImxVpuFramebuffer const &output
 		base::Bind(
 			&Client::PictureReady,
 			client_,
-			media::Picture(picture_buffer_id, input_bitstream_buffer_id)
+			media::Picture(
+				picture_buffer_id,
+				input_bitstream_buffer_id,
+				gfx::Rect(
+					0,
+					0,
+					vpu_dec_initial_info_.frame_width,
+					vpu_dec_initial_info_.frame_height
+				)
+			)
 		)
 	);
 
