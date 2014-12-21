@@ -1,3 +1,4 @@
+#include <iomanip>
 #include "media/base/limits.h"
 #include "base/bind.h"
 #include "base/memory/singleton.h"
@@ -169,14 +170,16 @@ void ImxVpuVideoDecodeAccelerator::Decode(media::BitstreamBuffer const &bitstrea
 void ImxVpuVideoDecodeAccelerator::AssignPictureBuffers(std::vector < media::PictureBuffer > const &buffers)
 {
 	DCHECK(output_picture_buffers_.empty());
+	DCHECK(buffers.size() == vpu_framebuffers_.size());
 
 	base::AutoLock auto_lock(lock_);
 
 	VLOG(1) << buffers.size() << " picture buffers are being provided by the client";
 
-	// TODO: is the size of "buffers" always exactly the same size as the one
-	// requested in ProvidePictureBuffers? In other words, is
-	// buffers.size() always the same as the size of the vpu_framebuffers_ array?
+
+	// without this call, the GL calls below would not use the correct context
+	make_context_current_.Run();
+
 	for (size_t i = 0; i < buffers.size(); ++i)
 	{
 		int32 id = buffers[i].id();
@@ -186,8 +189,30 @@ void ImxVpuVideoDecodeAccelerator::AssignPictureBuffers(std::vector < media::Pic
 		ImxVpuFramebuffer &framebuffer = vpu_framebuffers_[i];
 		framebuffer.user_data = reinterpret_cast < void* > (id);
 
-		VLOG(2) << "Associating picture buffer " << i << "/" << buffers.size() << " ID " << id << " with framebuffer";
+		// associate VIV direct textures with VPU framebuffers (one texture per framebuffer)
+		// by mapping the framebuffer to the direct texture
+		// only needs to be done once, since this mapping doesn't change
+		GLuint picture_buffer_texture_id = buffers[i].texture_id();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, picture_buffer_texture_id);
+
+		GLvoid *virt_addr = framebuffer.virtual_address;
+		GLuint phys_addr = reinterpret_cast < GLuint > (framebuffer.physical_address);
+
+		direct_texture_procs_.TexDirectVIVMap(
+			GL_TEXTURE_2D,
+			aligned_width_, aligned_height_,
+			GL_VIV_I420,
+			&virt_addr, &phys_addr
+		);
+
+		VLOG(1)
+			<< "Associating picture buffer " << i << "/" << buffers.size() << " ID " << id << " with framebuffer #" << i << std::hex
+			<< " virtual address " << std::setfill('0') << std::setw(8) << reinterpret_cast < void* > (virt_addr)
+			<< " physical address " << std::setfill('0') << std::setw(8) << reinterpret_cast < void* > (phys_addr)
+			<< std::dec;
 	}
+
 
 	ProcessQueuedInput();
 }
@@ -666,15 +691,6 @@ bool ImxVpuVideoDecodeAccelerator::ProcessOutput(ImxVpuFramebuffer const &output
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, picture_buffer_texture_id);
 
-	GLvoid *virt_addr = output_framebuffer.virtual_address;
-	GLuint phys_addr = reinterpret_cast < GLuint > (output_framebuffer.physical_address);
-
-	direct_texture_procs_.TexDirectVIVMap(
-		GL_TEXTURE_2D,
-		aligned_width_, aligned_height_,
-		GL_VIV_I420,
-		&virt_addr, &phys_addr
-	);
 	direct_texture_procs_.TexDirectInvalidateVIV(GL_TEXTURE_2D);
 
 	gles2_decoder_->RestoreTextureUnitBindings(0);
