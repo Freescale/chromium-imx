@@ -1,4 +1,4 @@
-From bbfacde4357866e06f99e82125d5e1e620671645 Mon Sep 17 00:00:00 2001
+From b80573b80dd42a5aa00c4d2f463e5fede1edfef0 Mon Sep 17 00:00:00 2001
 From: Carlos Rafael Giani <dv@pseudoterminal.org>
 Date: Thu, 25 Sep 2014 22:54:28 +0200
 Subject: [PATCH] Add VPU video decode accelerator to Chromium 38 GPU media
@@ -17,10 +17,10 @@ Signed-off-by: Carlos Rafael Giani <dv@pseudoterminal.org>
  5 files changed, 49 insertions(+), 4 deletions(-)
 
 diff --git a/build/common.gypi b/build/common.gypi
-index 609041c..1dbb5ed 100644
+index 11e8d1d..c87b1b3 100644
 --- a/build/common.gypi
 +++ b/build/common.gypi
-@@ -1189,6 +1189,9 @@
+@@ -1241,6 +1241,9 @@
      # Use system ICU instead of bundled one.
      'use_system_icu%' : 0,
  
@@ -31,7 +31,7 @@ index 609041c..1dbb5ed 100644
      # able to turn it off for various reasons.
      'linux_disable_pie%': 0,
 diff --git a/content/common/gpu/media/gpu_video_decode_accelerator.cc b/content/common/gpu/media/gpu_video_decode_accelerator.cc
-index c1cd553..c202605 100644
+index df8ec5b..509577a 100644
 --- a/content/common/gpu/media/gpu_video_decode_accelerator.cc
 +++ b/content/common/gpu/media/gpu_video_decode_accelerator.cc
 @@ -26,6 +26,8 @@
@@ -43,7 +43,7 @@ index c1cd553..c202605 100644
  #elif defined(OS_MACOSX)
  #include "content/common/gpu/media/vt_video_decode_accelerator.h"
  #elif defined(OS_CHROMEOS) && defined(ARCH_CPU_ARMEL) && defined(USE_X11)
-@@ -256,6 +258,11 @@ void GpuVideoDecodeAccelerator::Initialize(
+@@ -254,6 +256,11 @@ void GpuVideoDecodeAccelerator::Initialize(
    DVLOG(0) << "Initializing DXVA HW decoder for windows.";
    video_decode_accelerator_.reset(
        new DXVAVideoDecodeAccelerator(make_context_current_));
@@ -56,10 +56,10 @@ index c1cd553..c202605 100644
    video_decode_accelerator_.reset(new VTVideoDecodeAccelerator(
        static_cast<CGLContextObj>(
 diff --git a/content/content_common.gypi b/content/content_common.gypi
-index 048ab0d..0f51e6d 100644
+index 6d9a28d..05e248c 100644
 --- a/content/content_common.gypi
 +++ b/content/content_common.gypi
-@@ -714,6 +714,40 @@
+@@ -733,6 +733,40 @@
          'common/gpu/media/android_video_decode_accelerator.h',
        ],
      }],
@@ -101,7 +101,7 @@ index 048ab0d..0f51e6d 100644
        'dependencies': [
          '../third_party/libyuv/libyuv.gyp:libyuv',
 diff --git a/gpu/config/software_rendering_list_json.cc b/gpu/config/software_rendering_list_json.cc
-index f6dd7e5..9d851d0 100644
+index 8630d75..5433f61 100644
 --- a/gpu/config/software_rendering_list_json.cc
 +++ b/gpu/config/software_rendering_list_json.cc
 @@ -496,7 +496,8 @@ const char kSoftwareRenderingListJson[] = LONG_STRING_CONST(

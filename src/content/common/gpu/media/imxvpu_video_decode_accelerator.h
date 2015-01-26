@@ -32,14 +32,14 @@ public:
 	explicit ImxVpuVideoDecodeAccelerator(base::WeakPtr < gpu::gles2::GLES2Decoder > const gles2_decoder, base::Callback < bool(void) > const &make_context_current);
 	virtual ~ImxVpuVideoDecodeAccelerator();
 
-	virtual bool Initialize(media::VideoCodecProfile profile, Client *client) OVERRIDE;
-	virtual void Decode(media::BitstreamBuffer const &bitstream_buffer) OVERRIDE;
-	virtual void AssignPictureBuffers(std::vector < media::PictureBuffer > const &buffers) OVERRIDE;
-	virtual void ReusePictureBuffer(int32 picture_buffer_id) OVERRIDE;
-	virtual void Flush() OVERRIDE;
-	virtual void Reset() OVERRIDE;
-	virtual void Destroy() OVERRIDE;
-	virtual bool CanDecodeOnIOThread() OVERRIDE;
+	virtual bool Initialize(media::VideoCodecProfile profile, Client *client) override;
+	virtual void Decode(media::BitstreamBuffer const &bitstream_buffer) override;
+	virtual void AssignPictureBuffers(std::vector < media::PictureBuffer > const &buffers) override;
+	virtual void ReusePictureBuffer(int32 picture_buffer_id) override;
+	virtual void Flush() override;
+	virtual void Reset() override;
+	virtual void Destroy() override;
+	virtual bool CanDecodeOnIOThread() override;
 
 
 private:

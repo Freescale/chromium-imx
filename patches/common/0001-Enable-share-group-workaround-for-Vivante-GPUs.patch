@@ -1,4 +1,4 @@
-From 71be0188f1d34ebcd4656e0ba7e574948d63d8b8 Mon Sep 17 00:00:00 2001
+From 4990b4078c06cb0633f5764841259d18cd9fb7cf Mon Sep 17 00:00:00 2001
 From: Carlos Rafael Giani <dv@pseudoterminal.org>
 Date: Sun, 12 Oct 2014 19:06:52 +0200
 Subject: [PATCH] Enable share group workaround for Vivante GPUs
@@ -16,10 +16,10 @@ Signed-off-by: Carlos Rafael Giani <dv@pseudoterminal.org>
  1 file changed, 3 deletions(-)
 
 diff --git a/gpu/config/gpu_driver_bug_list_json.cc b/gpu/config/gpu_driver_bug_list_json.cc
-index 5477c59..4b8a873 100644
+index 120e6db..dbc2c88 100644
 --- a/gpu/config/gpu_driver_bug_list_json.cc
 +++ b/gpu/config/gpu_driver_bug_list_json.cc
-@@ -406,9 +406,6 @@ const char kGpuDriverBugListJson[] = LONG_STRING_CONST(
+@@ -414,9 +414,6 @@ const char kGpuDriverBugListJson[] = LONG_STRING_CONST(
        "id": 34,
        "cr_bugs": [179250, 229643, 230896],
        "description": "Share groups are not working on (older?) Vivante drivers",
