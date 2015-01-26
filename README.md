@@ -5,7 +5,7 @@ This repository contains sources which add hardware video decoding support to Ch
 using the Freescale i.MX VPU. They are placed under the BSD 3-clause license. See the
 LICENSE file for details.
 
-These sources are written against Chromium 38.0.2125.101.
+These sources are written against Chromium 40.0.2214.91.
 
 
 Prerequisites

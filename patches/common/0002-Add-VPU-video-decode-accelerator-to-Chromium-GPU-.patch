@@ -1,7 +1,7 @@
 From b80573b80dd42a5aa00c4d2f463e5fede1edfef0 Mon Sep 17 00:00:00 2001
 From: Carlos Rafael Giani <dv@pseudoterminal.org>
 Date: Thu, 25 Sep 2014 22:54:28 +0200
-Subject: [PATCH] Add VPU video decode accelerator to Chromium 38 GPU media
+Subject: [PATCH] Add VPU video decode accelerator to Chromium GPU media
  stack
 
 Upstream-Status: Inappropriate [other]
