@@ -16,11 +16,9 @@ Signed-off-by: Carlos Rafael Giani <dv@pseudoterminal.org>
  ui/gl/gl_implementation.h                          |  4 +--
  5 files changed, 49 insertions(+), 4 deletions(-)
 
-diff --git a/build/common.gypi b/build/common.gypi
-index 11e8d1d..c87b1b3 100644
 --- a/build/common.gypi
 +++ b/build/common.gypi
-@@ -1241,6 +1241,9 @@
+@@ -1259,6 +1259,9 @@
      # Use system ICU instead of bundled one.
      'use_system_icu%' : 0,
  
@@ -30,11 +28,19 @@ index 11e8d1d..c87b1b3 100644
      # Default to enabled PIE; this is important for ASLR but we may need to be
      # able to turn it off for various reasons.
      'linux_disable_pie%': 0,
-diff --git a/content/common/gpu/media/gpu_video_decode_accelerator.cc b/content/common/gpu/media/gpu_video_decode_accelerator.cc
-index df8ec5b..509577a 100644
+--- a/content/common/gpu/media/gpu_video_decode_accelerator.h
++++ b/content/common/gpu/media/gpu_video_decode_accelerator.h
+@@ -75,6 +75,7 @@
+   class MessageFilter;
+ 
+   scoped_ptr<media::VideoDecodeAccelerator> CreateDXVAVDA();
++  scoped_ptr<media::VideoDecodeAccelerator> CreateImxVpuVDA();
+   scoped_ptr<media::VideoDecodeAccelerator> CreateV4L2VDA();
+   scoped_ptr<media::VideoDecodeAccelerator> CreateV4L2SliceVDA();
+   scoped_ptr<media::VideoDecodeAccelerator> CreateVaapiVDA();
 --- a/content/common/gpu/media/gpu_video_decode_accelerator.cc
 +++ b/content/common/gpu/media/gpu_video_decode_accelerator.cc
-@@ -26,6 +26,8 @@
+@@ -31,6 +31,8 @@
  #if defined(OS_WIN)
  #include "base/win/windows_version.h"
  #include "content/common/gpu/media/dxva_video_decode_accelerator.h"
@@ -42,24 +48,35 @@ index df8ec5b..509577a 100644
 +#include "content/common/gpu/media/imxvpu_video_decode_accelerator.h"
  #elif defined(OS_MACOSX)
  #include "content/common/gpu/media/vt_video_decode_accelerator.h"
- #elif defined(OS_CHROMEOS) && defined(ARCH_CPU_ARMEL) && defined(USE_X11)
-@@ -254,6 +256,11 @@ void GpuVideoDecodeAccelerator::Initialize(
-   DVLOG(0) << "Initializing DXVA HW decoder for windows.";
-   video_decode_accelerator_.reset(
-       new DXVAVideoDecodeAccelerator(make_context_current_));
-+#elif defined(IMX_PLATFORM)
-+  VLOG(1) << "Using the i.MX6 VPU decode accelerator";
-+  video_decode_accelerator_.reset(new ImxVpuVideoDecodeAccelerator(
+ #elif defined(OS_CHROMEOS)
+@@ -256,6 +258,7 @@
+   // same as the order of querying supported profiles of VDAs.
+   const GpuVideoDecodeAccelerator::CreateVDAFp create_vda_fps[] = {
+       &GpuVideoDecodeAccelerator::CreateDXVAVDA,
++      &GpuVideoDecodeAccelerator::CreateImxVpuVDA,
+       &GpuVideoDecodeAccelerator::CreateV4L2VDA,
+       &GpuVideoDecodeAccelerator::CreateV4L2SliceVDA,
+       &GpuVideoDecodeAccelerator::CreateVaapiVDA,
+@@ -296,6 +299,16 @@
+   return decoder.Pass();
+ }
+ 
++scoped_ptr<media::VideoDecodeAccelerator>
++GpuVideoDecodeAccelerator::CreateImxVpuVDA() {
++  scoped_ptr<media::VideoDecodeAccelerator> decoder;
++  DVLOG(0) << "Using the i.MX6 VPU decode accelerator";
++  decoder.reset(new ImxVpuVideoDecodeAccelerator(
 +      stub_->decoder()->AsWeakPtr(),
 +      make_context_current_));
- #elif defined(OS_MACOSX)
-   video_decode_accelerator_.reset(new VTVideoDecodeAccelerator(
-       static_cast<CGLContextObj>(
-diff --git a/content/content_common.gypi b/content/content_common.gypi
-index 6d9a28d..05e248c 100644
++  return decoder.Pass();
++}
++
+ scoped_ptr<media::VideoDecodeAccelerator>
+ GpuVideoDecodeAccelerator::CreateV4L2VDA() {
+   scoped_ptr<media::VideoDecodeAccelerator> decoder;
 --- a/content/content_common.gypi
 +++ b/content/content_common.gypi
-@@ -733,6 +733,40 @@
+@@ -782,6 +782,40 @@
          'common/gpu/media/android_video_decode_accelerator.h',
        ],
      }],
@@ -100,11 +117,9 @@ index 6d9a28d..05e248c 100644
      ['OS=="android" and enable_webrtc==1', {
        'dependencies': [
          '../third_party/libyuv/libyuv.gyp:libyuv',
-diff --git a/gpu/config/software_rendering_list_json.cc b/gpu/config/software_rendering_list_json.cc
-index 8630d75..5433f61 100644
 --- a/gpu/config/software_rendering_list_json.cc
 +++ b/gpu/config/software_rendering_list_json.cc
-@@ -496,7 +496,8 @@ const char kSoftwareRenderingListJson[] = LONG_STRING_CONST(
+@@ -480,7 +480,8 @@
          "all"
        ]
      },
@@ -112,9 +127,9 @@ index 8630d75..5433f61 100644
 +    // 48 disabled for i.MX6 integration
 +/*    {
        "id": 48,
-       "description": "Accelerated video decode is unavailable on Mac and Linux",
-       "cr_bugs": [137247, 133828],
-@@ -520,7 +521,7 @@ const char kSoftwareRenderingListJson[] = LONG_STRING_CONST(
+       "description": "Accelerated video decode is unavailable on Linux",
+       "cr_bugs": [137247],
+@@ -490,7 +491,7 @@
        "features": [
          "accelerated_video_decode"
        ]
@@ -123,11 +138,9 @@ index 8630d75..5433f61 100644
      {
        "id": 49,
        "description": "NVidia GeForce GT 650M can cause the system to hang with flash 3D",
-diff --git a/ui/gl/gl_implementation.h b/ui/gl/gl_implementation.h
-index 7319b47..e651ba4 100644
 --- a/ui/gl/gl_implementation.h
 +++ b/ui/gl/gl_implementation.h
-@@ -88,7 +88,7 @@ GL_EXPORT bool HasDesktopGLFeatures();
+@@ -96,7 +96,7 @@
  GLImplementation GetNamedGLImplementation(const std::string& name);
  
  // Get the name of a GL implementation.
@@ -136,7 +149,7 @@ index 7319b47..e651ba4 100644
  
  // Add a native library to those searched for GL entry points.
  void AddGLNativeLibrary(base::NativeLibrary library);
-@@ -107,7 +107,7 @@ GL_EXPORT void SetGLGetProcAddressProc(GLGetProcAddressProc proc);
+@@ -115,7 +115,7 @@
  // and when querying functions from the EGL library supplied by Android, it may
  // return a function that prints a log message about the function being
  // unsupported.
@@ -145,6 +158,3 @@ index 7319b47..e651ba4 100644
  
  // Return information about the GL window system binding implementation (e.g.,
  // EGL, GLX, WGL). Returns true if the information was retrieved successfully.
--- 
-1.9.1
-

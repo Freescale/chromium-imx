@@ -709,7 +709,8 @@ bool ImxVpuVideoDecodeAccelerator::ProcessOutput(ImxVpuFramebuffer const &output
 					0,
 					vpu_dec_initial_info_.frame_width,
 					vpu_dec_initial_info_.frame_height
-				)
+				),
+				false
 			)
 		)
 	);
