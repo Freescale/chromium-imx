@@ -274,38 +274,43 @@ static unsigned long vpu_load_inst_counter = 0;
 ImxVpuDecReturnCodes imx_vpu_dec_load(void)
 {
 	IMX_VPU_TRACE("VPU load instance counter: %lu", vpu_load_inst_counter);
-	if (vpu_load_inst_counter != 0)
-		return IMX_VPU_DEC_RETURN_CODE_OK;
-
-	ImxVpuDecReturnCodes ret = dec_convert_retcode(VPU_DecLoad());
-	if (ret != IMX_VPU_DEC_RETURN_CODE_OK)
-		IMX_VPU_ERROR("loading decoder failed: %s", imx_vpu_dec_error_string(ret));
-	else
+	if (vpu_load_inst_counter == 0)
 	{
-		IMX_VPU_TRACE("loaded decoder");
-		++vpu_load_inst_counter;
+		ImxVpuDecReturnCodes ret = dec_convert_retcode(VPU_DecLoad());
+		if (ret != IMX_VPU_DEC_RETURN_CODE_OK)
+		{
+			IMX_VPU_ERROR("loading decoder failed: %s", imx_vpu_dec_error_string(ret));
+			return ret;
+		}
+		else
+			IMX_VPU_TRACE("loaded decoder");
 	}
 
-	return ret;
+	++vpu_load_inst_counter;
+
+	return IMX_VPU_DEC_RETURN_CODE_OK;
 }
 
 
 ImxVpuDecReturnCodes imx_vpu_dec_unload(void)
 {
 	IMX_VPU_TRACE("VPU load instance counter: %lu", vpu_load_inst_counter);
-	if (vpu_load_inst_counter == 0)
-		return IMX_VPU_DEC_RETURN_CODE_OK;
-
-	ImxVpuDecReturnCodes ret = dec_convert_retcode(VPU_DecUnLoad());
-	if (ret != IMX_VPU_DEC_RETURN_CODE_OK)
-		IMX_VPU_ERROR("unloading decoder failed: %s", imx_vpu_dec_error_string(ret));
-	else
+	if (vpu_load_inst_counter == 1)
 	{
-		IMX_VPU_TRACE("unloaded decoder");
-		--vpu_load_inst_counter;
+		ImxVpuDecReturnCodes ret = dec_convert_retcode(VPU_DecUnLoad());
+		if (ret != IMX_VPU_DEC_RETURN_CODE_OK)
+		{
+			IMX_VPU_ERROR("unloading decoder failed: %s", imx_vpu_dec_error_string(ret));
+			return ret;
+		}	
+		else
+			IMX_VPU_TRACE("unloaded decoder");
 	}
 
-	return ret;
+	if (vpu_load_inst_counter > 0)
+		--vpu_load_inst_counter;
+
+	return IMX_VPU_DEC_RETURN_CODE_OK;
 }
 
 
