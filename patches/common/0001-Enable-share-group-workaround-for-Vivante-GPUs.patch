@@ -15,11 +15,9 @@ Signed-off-by: Carlos Rafael Giani <dv@pseudoterminal.org>
  gpu/config/gpu_driver_bug_list_json.cc | 3 ---
  1 file changed, 3 deletions(-)
 
-diff --git a/gpu/config/gpu_driver_bug_list_json.cc b/gpu/config/gpu_driver_bug_list_json.cc
-index 120e6db..dbc2c88 100644
 --- a/gpu/config/gpu_driver_bug_list_json.cc
 +++ b/gpu/config/gpu_driver_bug_list_json.cc
-@@ -414,9 +414,6 @@ const char kGpuDriverBugListJson[] = LONG_STRING_CONST(
+@@ -418,9 +418,6 @@
        "id": 34,
        "cr_bugs": [179250, 229643, 230896],
        "description": "Share groups are not working on (older?) Vivante drivers",
@@ -29,6 +27,3 @@ index 120e6db..dbc2c88 100644
        "gl_extensions": ".*GL_VIV_shader_binary.*",
        "features": [
          "use_virtualized_gl_contexts"
--- 
-1.9.1
-

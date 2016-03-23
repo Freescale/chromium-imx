@@ -20,7 +20,7 @@ class ImxVpuLoadSingleton
 public:
 	static ImxVpuLoadSingleton* GetInstance()
 	{
-		return Singleton < ImxVpuLoadSingleton > ::get();
+		return base::Singleton < ImxVpuLoadSingleton > ::get();
 	}
 
 	bool Load()
@@ -58,7 +58,7 @@ private:
 	{
 	}
 
-	friend struct DefaultSingletonTraits < ImxVpuLoadSingleton >;
+	friend struct base::DefaultSingletonTraits < ImxVpuLoadSingleton >;
 
 	DISALLOW_COPY_AND_ASSIGN(ImxVpuLoadSingleton);
 
@@ -709,7 +709,8 @@ bool ImxVpuVideoDecodeAccelerator::ProcessOutput(ImxVpuFramebuffer const &output
 					0,
 					vpu_dec_initial_info_.frame_width,
 					vpu_dec_initial_info_.frame_height
-				)
+				),
+				false
 			)
 		)
 	);
