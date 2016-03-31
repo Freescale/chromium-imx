@@ -68,6 +68,14 @@ private:
 
 } // unnamed namespace end
 
+static const media::VideoCodecProfile kSupportedProfiles[] = {
+	media::H264PROFILE_BASELINE,
+	media::H264PROFILE_MAIN,
+	media::H264PROFILE_HIGH,
+	media::H264PROFILE_MAX,
+	media::VP8PROFILE_ANY,
+};
+
 
 ImxVpuVideoDecodeAccelerator::ImxVpuVideoDecodeAccelerator(base::WeakPtr < gpu::gles2::GLES2Decoder > const gles2_decoder, base::Callback < bool(void) > const &make_context_current)
 	: gles2_decoder_(gles2_decoder)
@@ -321,6 +329,22 @@ void ImxVpuVideoDecodeAccelerator::Destroy()
 	DCHECK_EQ(message_loop_, base::MessageLoop::current());
 	Cleanup();
 	delete this;
+}
+
+
+// static
+media::VideoDecodeAccelerator::SupportedProfiles
+ImxVpuVideoDecodeAccelerator::GetSupportedProfiles()
+{
+    SupportedProfiles profiles;
+    for (const auto& supported_profile : kSupportedProfiles) {
+		SupportedProfile profile;
+		profile.profile = supported_profile;
+		profile.min_resolution.SetSize(64, 64);
+		profile.max_resolution.SetSize(1920, 1088);
+		profiles.push_back(profile);
+    }
+	return profiles;
 }
 
 
