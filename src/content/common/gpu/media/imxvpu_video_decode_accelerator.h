@@ -41,6 +41,7 @@ public:
 	virtual void Destroy() override;
 	virtual bool CanDecodeOnIOThread() override;
 
+    static media::VideoDecodeAccelerator::SupportedProfiles GetSupportedProfiles();
 
 private:
 	enum ProcessRetval

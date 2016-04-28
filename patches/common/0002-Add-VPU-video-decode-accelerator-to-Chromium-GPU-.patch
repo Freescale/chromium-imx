@@ -57,23 +57,34 @@ Signed-off-by: Carlos Rafael Giani <dv@pseudoterminal.org>
        &GpuVideoDecodeAccelerator::CreateV4L2VDA,
        &GpuVideoDecodeAccelerator::CreateV4L2SliceVDA,
        &GpuVideoDecodeAccelerator::CreateVaapiVDA,
-@@ -296,6 +299,16 @@
+@@ -296,6 +299,18 @@
    return decoder.Pass();
  }
  
 +scoped_ptr<media::VideoDecodeAccelerator>
 +GpuVideoDecodeAccelerator::CreateImxVpuVDA() {
 +  scoped_ptr<media::VideoDecodeAccelerator> decoder;
++#if defined(IMX_PLATFORM)
 +  DVLOG(0) << "Using the i.MX6 VPU decode accelerator";
 +  decoder.reset(new ImxVpuVideoDecodeAccelerator(
 +      stub_->decoder()->AsWeakPtr(),
 +      make_context_current_));
++#endif
 +  return decoder.Pass();
 +}
 +
  scoped_ptr<media::VideoDecodeAccelerator>
  GpuVideoDecodeAccelerator::CreateV4L2VDA() {
    scoped_ptr<media::VideoDecodeAccelerator> decoder;
+@@ -414,6 +414,8 @@
+   profiles = VTVideoDecodeAccelerator::GetSupportedProfiles();
+ #elif defined(OS_ANDROID)
+   profiles = AndroidVideoDecodeAccelerator::GetSupportedProfiles();
++#elif defined(IMX_PLATFORM)
++  profiles = ImxVpuVideoDecodeAccelerator::GetSupportedProfiles();
+ #endif
+   return GpuVideoAcceleratorUtil::ConvertMediaToGpuDecodeProfiles(profiles);
+ }
 --- a/content/content_common.gypi
 +++ b/content/content_common.gypi
 @@ -782,6 +782,40 @@
