@@ -17,7 +17,7 @@ Signed-off-by: Carlos Rafael Giani <dv@pseudoterminal.org>
 
 --- a/gpu/config/gpu_driver_bug_list_json.cc
 +++ b/gpu/config/gpu_driver_bug_list_json.cc
-@@ -418,9 +418,6 @@
+@@ -415,9 +415,6 @@
        "id": 34,
        "cr_bugs": [179250, 229643, 230896],
        "description": "Share groups are not working on (older?) Vivante drivers",
